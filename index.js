@@ -1,20 +1,22 @@
 var http = require('http');
 
 http.createServer(function(request, response) {
+  console.log('starting');
   try 
   {
+    var origin = request;
     response.writeHead(200, 
 	{"Content-Type": "text/plain",
-	 "Access-Control-Allow-Origin": "chrome-extension://legghnkhmomhoefmbpnnakkpnnkmlelh",
-	 "Access-Control-Allow-Origin": "chrome-extension://oagjbcifdmcaoiaamngnblfbbcaijhjd",
-	 "Access-Control-Allow-Origin": "chrome-extension://legghnkhmomhoefmbpnnakkpnnkmlelh",
-	 "Access-Control-Allow-Origin": "chrome-extension://oagjbcifdmcaoiaamngnblfbbcaijhjd",
+	 "Access-Control-Allow-Origin": "file://",
+         "Access-Control-Allow-Headers": "X-Requested-With",
+         "Access-Control-Allow-Origin": "chrome-extension://oagjbcifdmcaoiaamngnblfbbcaijhjd"
 	 });
   
     var url = require('url').parse(request.url, true);
     var mode = url.query.mode;
     var action = require('./project.js');
 
+    console.log(url);
     if (mode === 'parser')
     {
       response.write('return ' + action.get_parser.toString());
@@ -22,6 +24,7 @@ http.createServer(function(request, response) {
     } 
     else if (mode === 'data')
     {
+  	console.log('data');
       var query = url.query;
       var fn = query.fn;
 
@@ -35,6 +38,7 @@ http.createServer(function(request, response) {
   			args[i + 2] = query["a" + i];
       }
 
+      if (action[fn])
       (action[fn]).apply(null, args);
 			args = null;
     }

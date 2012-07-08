@@ -1,11 +1,8 @@
-exports.update = function(sql, response, callback)
+exports.update = function(sql, values, response, callback)
 {
   console.log("UPDATE: " + sql);
-  var pg = require('pg').native;
-  var conString = "<insert connection string here>";
-
-  var client = new pg.Client(conString);
-  client.connect();
+  var pg = require('pg');
+  var conString = "tcp://postgres:2b4bfcb57739@127.0.0.1:6543/template1";
 
   pg.connect(conString, function(err, client)
   {
@@ -17,7 +14,7 @@ exports.update = function(sql, response, callback)
 		}
 	 
     console.log("UPDATE connected");
-    client.query(sql, function(err) {
+    client.query(sql, values, function(err) {
  			if (err !== null) {
 				console.log("QUERY ERROR: " + err);
 			  console.log(new Error().stack);
@@ -30,7 +27,6 @@ exports.update = function(sql, response, callback)
       } 
 		  
       console.log("UPDATE finished");
-			if (callback !== null)
         response.end();
     });
   });
