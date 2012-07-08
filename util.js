@@ -2,7 +2,8 @@ exports.update = function(sql, values, response, callback)
 {
   console.log("UPDATE: " + sql);
   var pg = require('pg');
-  var conString = "tcp://postgres:2b4bfcb57739@127.0.0.1:6543/template1";
+  var conString = require('./config').postgres;
+  console.log(conString);
 
   pg.connect(conString, function(err, client)
   {
@@ -35,11 +36,10 @@ exports.update = function(sql, values, response, callback)
 
 exports.select = function(sql, response, values_callback, no_values_callback)
 {
-  // TODO: move connection string into a file
   console.log("SELECT: " + sql);
 
-  var pg = require('pg').native;
-  var conString = "<insert connection string here>";
+  var pg = require('pg');
+  var conString = require('./config').postgres;
 
   pg.connect(conString, function(err, client)
   {
@@ -107,8 +107,8 @@ exports.select_response = function(sql, response)
   console.log('SELECT_RESPONSE: ' + sql);
 
   var pg = require('pg').native;
-  var conString = "<insert connection string here>";
- 
+  var conString = require('./config').postgres;
+   	
   pg.connect(conString, function(err, client) {
 		if (err !== null) {
       console.log("CONN ERROR: " + err);
