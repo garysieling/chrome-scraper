@@ -14,7 +14,7 @@ http.createServer(function(request, response) {
   
     var url = require('url').parse(request.url, true);
     var mode = url.query.mode;
-    var action = require('./project.js');
+    var action = require('./' + require('./config').project);
 
     console.log(url);
     if (mode === 'parser')

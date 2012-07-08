@@ -1,6 +1,15 @@
 var console = {log: function(m){WSH.echo(m);}, 
 				       write: function(m){WSH.StdOut.Write(m);}};
 
+var require = function(file)
+{
+  return eval("new function(){ var exports={}; " + 
+										new ActiveXObject("Scripting.FileSystemObject").
+	       					  OpenTextFile(file,1).ReadAll() + "; return exports }");
+
+
+}
+
 var workingDir = "<directory of this script>";
 var startTime = Date()
 console.log(startTime)
@@ -72,7 +81,7 @@ if (excludeFile !== "")
 }
 
 var chrome="<insert path to Chrome executable>";
-var path="<insert path to files>"
+var path=require('./config.js').parseFolder;
 var directoryObj = new ActiveXObject("Scripting.FileSystemObject")
 var directory = directoryObj.GetFolder(path)
 var data="<temp folder name here>";

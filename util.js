@@ -3,7 +3,6 @@ exports.update = function(sql, values, response, callback)
   console.log("UPDATE: " + sql);
   var pg = require('pg');
   var conString = require('./config').postgres;
-  console.log(conString);
 
   pg.connect(conString, function(err, client)
   {
