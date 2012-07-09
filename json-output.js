@@ -40,3 +40,35 @@ exports.select_response = function(sql, response)
   response.end();
 }
 
+exports.write_value = function(type, key, value)
+{
+	var file = __dirname + '/' + require('./config').file + "-" + type;
+
+	var fs = require('fs');
+  var fileOut = fs.createWriteStream(file, {'flags': 'a'});
+	
+		 var writeVal;
+     if (key !=='')
+	   {
+       writeVal ="'" + key + "':" + value;  
+	   }
+	   else
+	   {
+		   writeVal = value;
+	   }
+	   writeVal += "\n";
+	fileOut.write(writeVal);
+}
+
+exports.read_values = function(type)
+{
+	var fs = require('fs');
+	var data = fs.readFileSync(require('./config').file + "-" + type, 'utf8');
+
+	if (!data)
+	{
+		return [];
+	}
+  console.log("data:" + data);
+	return data.split("\n");
+}

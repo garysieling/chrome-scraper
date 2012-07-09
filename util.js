@@ -20,3 +20,7 @@ exports.select_response = function(sql, response)
 	require('./' + require('./config').method + '-output').select_response(sql, response);
 }
 
+exports.write_value = function(type, key, value)
+{
+	require('./' + require('./config').method + '-output').write_value(type, key, value);	
+}

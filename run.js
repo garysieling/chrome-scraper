@@ -5,11 +5,12 @@ var require = function(file)
 {
   return eval("new function(){ var exports={}; " + 
 										new ActiveXObject("Scripting.FileSystemObject").
-	       					  OpenTextFile(file,1).ReadAll() + "; return exports }");
+	       					  OpenTextFile(file + '.js',1).ReadAll() + "; return exports }");
 
 
 }
 
+var config = require('./config');
 var workingDir = "<directory of this script>";
 var startTime = Date()
 console.log(startTime)
@@ -53,6 +54,10 @@ for (var i = 0; i < args.length; i++) {
 	
 	if ("--exclude" === args(i) || "-e" === args(i))
 		excludeFile = args(++i)
+
+
+	if ("--include" === args(i) || "-i" === args(i))
+		includeFile = args(++i)
 }
 
 if (resume)
@@ -63,14 +68,28 @@ if (resume)
 		file.close()
 }
 
-var exclude = []
+var include = {}
+if (includeFile !== "")
+{
+    var obj = WSH.CreateObject("Scripting.FileSystemObject")
+		var path = workingDir + includeFile
+		var file = obj.OpenTextFile(path, 1)
+
+    while( !file.AtEndOfStream )
+		{
+			var key = file.ReadLine()
+		  include[key] = true
+		}
+		
+		file.close()
+}
+var exclude = {} 
 if (excludeFile !== "")
 {
     var obj = WSH.CreateObject("Scripting.FileSystemObject")
 		var path = workingDir + excludeFile
 		var file = obj.OpenTextFile(path, 1)
 
-		exclude = {}
     while( !file.AtEndOfStream )
 		{
 			var key = file.ReadLine()
@@ -81,13 +100,13 @@ if (excludeFile !== "")
 }
 
 var chrome="<insert path to Chrome executable>";
-var path=require('./config.js').parseFolder;
+var path=config.parseFolder;
 var directoryObj = new ActiveXObject("Scripting.FileSystemObject")
 var directory = directoryObj.GetFolder(path)
 var data="<temp folder name here>";
 var chromeArgs = " --user-data-dir=$data --incognito --disable-sync-autofill-profile --disable-sync  --disable-java --disable-javascript --disable-local-storage --disable-preconnect  --disable-restore-background-contents --disable-restore-session-state --dns-prefetch-disable --disable-images --disable-metrics --disable-metrics-reporting --disable-login-animations";
 
-var filematch="^[0-9]+-"
+var filematch = config.filematch;
 var fileRegex = new RegExp(filematch); 
 var shell = new ActiveXObject("WScript.Shell");
 
@@ -133,7 +152,8 @@ function loadChrome() {
 	  if (exclude[filename] && verbose)
 		  console.log("Skipping " + filename)
 
-  	while ((!fileRegex.test(filename)) && !files.atEnd())	{
+  	while ((!fileRegex.test(filename)) && !files.atEnd()
+						|| (includeFile.length > 0 && !include[filename])	)	{
       files.moveNext()
       filename = files.item().name;
   	}
